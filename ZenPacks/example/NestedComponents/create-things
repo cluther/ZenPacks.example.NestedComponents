@@ -1,0 +1,86 @@
+#!/usr/bin/env zendmd
+# vim: ft=python
+
+try:
+    dc = dmd.Devices.getOrganizer("Things")
+except Exception:
+    exit("No /Things device class. Install the ZenPack first.")
+
+d = dmd.Devices.findDeviceByIdExact("test-thing")
+if d:
+    d.deleteDevice()
+
+d = dc.createInstance("test-thing")
+
+from Products.DataCollector.ApplyDataMap import ApplyDataMap
+from Products.DataCollector.plugins.DataMaps import ObjectMap, RelationshipMap
+
+print "Modeling test-thing device in /Things device class."
+adm = ApplyDataMap()._applyDataMap
+
+[adm(d, m) for m in [
+    RelationshipMap(
+        relname="l1s",
+        modname="ZenPacks.example.NestedComponents.L1Thing",
+        objmaps=[
+            ObjectMap({"id": "l1-1", "title": "First L1 Thing"}),
+            ObjectMap({"id": "l1-2", "title": "Second L1 Thing"}),
+            ]),
+
+    RelationshipMap(
+        compname="l1s/l1-1",
+        relname="l2s",
+        modname="ZenPacks.example.NestedComponents.L2Thing",
+        objmaps=[
+            ObjectMap({"id": "l1-1-l2-1", "title": "Thing: 1 / 1"}),
+            ObjectMap({"id": "l1-1-l2-2", "title": "Thing: 1 / 2"}),
+            ]),
+
+    RelationshipMap(
+        compname="l1s/l1-2",
+        relname="l2s",
+        modname="ZenPacks.example.NestedComponents.L2Thing",
+        objmaps=[
+            ObjectMap({"id": "l1-2-l2-1", "title": "Thing: 2 / 1"}),
+            ObjectMap({"id": "l1-2-l2-2", "title": "Thing: 2 / 2"}),
+            ]),
+
+    RelationshipMap(
+        compname="l1s/l1-1/l2s/l1-1-l2-1",
+        relname="l3s",
+        modname="ZenPacks.example.NestedComponents.L3Thing",
+        objmaps=[
+            ObjectMap({"id": "l1-1-l2-1-l3-1", "title": "Thing: 1 / 1 / 1"}),
+            ObjectMap({"id": "l1-1-l2-1-l3-2", "title": "Thing: 1 / 1 / 2"}),
+            ]),
+
+    RelationshipMap(
+        compname="l1s/l1-1/l2s/l1-1-l2-2",
+        relname="l3s",
+        modname="ZenPacks.example.NestedComponents.L3Thing",
+        objmaps=[
+            ObjectMap({"id": "l1-1-l2-2-l3-1", "title": "Thing: 1 / 2 / 1"}),
+            ObjectMap({"id": "l1-1-l2-2-l3-2", "title": "Thing: 1 / 2 / 2"}),
+            ]),
+
+    RelationshipMap(
+        compname="l1s/l1-2/l2s/l1-2-l2-1",
+        relname="l3s",
+        modname="ZenPacks.example.NestedComponents.L3Thing",
+        objmaps=[
+            ObjectMap({"id": "l1-2-l2-1-l3-1", "title": "Thing: 2 / 1 / 1"}),
+            ObjectMap({"id": "l1-2-l2-1-l3-2", "title": "Thing: 2 / 1 / 2"}),
+            ]),
+
+    RelationshipMap(
+        compname="l1s/l1-2/l2s/l1-2-l2-2",
+        relname="l3s",
+        modname="ZenPacks.example.NestedComponents.L3Thing",
+        objmaps=[
+            ObjectMap({"id": "l1-2-l2-2-l3-1", "title": "Thing: 2 / 2 / 1"}),
+            ObjectMap({"id": "l1-2-l2-2-l3-2", "title": "Thing: 2 / 2 / 2"}),
+            ]),
+
+    ]]
+
+commit()

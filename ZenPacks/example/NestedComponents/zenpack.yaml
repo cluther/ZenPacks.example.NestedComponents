@@ -1,1 +1,25 @@
 name: ZenPacks.example.NestedComponents
+
+device_classes:
+  /Things:
+    zProperties:
+      zPythonClass: ZenPacks.example.NestedComponents.DeviceThing
+
+classes:
+  DeviceThing:
+    base: [zenpacklib.Device]
+
+  L1Thing:
+    base: [zenpacklib.Component]
+
+  L2Thing:
+    base: [zenpacklib.Component]
+
+  L3Thing:
+    base: [zenpacklib.Component]
+
+
+class_relationships:
+  - DeviceThing(l1s) 1:MC (device_thing)L1Thing
+  - L1Thing(l2s) 1:MC (l1)L2Thing
+  - L2Thing(l3s) 1:MC (l2)L3Thing
